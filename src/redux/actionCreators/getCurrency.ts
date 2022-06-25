@@ -20,7 +20,6 @@ export const getCurrency = () => {
         .then((responses) => responses)
         .then((result) => Promise.all(result.map((a) => a.json())))
         .then((all) => all.forEach((a) => (obj[a.query.to] = a.result)));
-      console.log(obj);
       dispatch({
         type: ActionType.GET_POST_SUCCESS,
         payload: obj,

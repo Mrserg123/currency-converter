@@ -5,10 +5,9 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import { Typography } from "@mui/material";
 import { useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
 
 interface Money {
-  money: { USD: string; EUR: string; PLN: string };
+  money: Record<Currency, string>;
   loading: boolean;
   error: string | null;
 }
@@ -16,25 +15,21 @@ interface Money {
 interface State {
   state?: Money;
 }
+type Currency = "USD" | "EUR" | "PLN";
 
-function Calculate(props: { currency: string }) {
-  const [amount, setAmount] = React.useState("");
-  const [resultCalc, setResultCalc] = React.useState(0);
+function Calculate(props: { currency: Currency }) {
+  const [amount, setAmount] = React.useState(0);
+  const [isShowCalc, setisShowCalc] = React.useState(false);
   const moneyState: State = useSelector((state) => state);
   let currency: { [index: string]: any } = moneyState.state.money;
-  let location = useLocation();
-
   function calcMoney() {
-    if (!amount) return false;
-    let resultCalc = currency[props.currency] * Number(amount);
-    return setResultCalc(resultCalc);
+    return (currency[props.currency] * amount).toFixed(2);
   }
-  React.useEffect(() => {
-    setResultCalc(0);
-    calcMoney();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.pathname]);
 
+  React.useEffect(() => {
+    setisShowCalc(false);
+  }, [amount]);
+  calcMoney();
   return (
     <>
       <Container sx={{ py: 1 }} maxWidth="md">
@@ -63,29 +58,34 @@ function Calculate(props: { currency: string }) {
           }}
         >
           <TextField
+            type="number"
             id="outlined-basic"
             label="Amount(UAH)"
             variant="outlined"
-            value={amount}
+            value={amount !== 0 ? amount : ""}
             onKeyPress={(event) => {
               if (event.key === "Enter") {
-                calcMoney();
+                setisShowCalc(true);
+                amount && calcMoney();
               }
             }}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setAmount(e.target.value)
+              setAmount(Number(e.target.value))
             }
           />
           <Button
             sx={{ ml: 3 }}
             variant="contained"
-            onClick={() => calcMoney()}
+            onClick={() => {
+              calcMoney();
+              setisShowCalc(true);
+            }}
           >
             Calculate
           </Button>
         </Box>
         <div>
-          {resultCalc !== 0 && (
+          {isShowCalc && (
             <div
               style={{
                 textAlign: "center",
@@ -93,7 +93,7 @@ function Calculate(props: { currency: string }) {
                 marginTop: "20px",
               }}
             >
-              <b>Result:</b> {resultCalc.toFixed(3)} ({props.currency})
+              <b>Result:</b> {calcMoney()} {props.currency}
             </div>
           )}
         </div>
@@ -101,4 +101,5 @@ function Calculate(props: { currency: string }) {
     </>
   );
 }
+
 export default Calculate;

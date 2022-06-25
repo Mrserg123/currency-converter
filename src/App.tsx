@@ -1,21 +1,23 @@
 import * as React from "react";
 import "./App.css";
-import { BrowserRouter, Routes, Route, Navigate, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./components/Home/Home";
 import Calculate from "./components/Tabs/Calculate";
 import { CircularProgress } from "@mui/material";
 import { useSelector } from "react-redux";
+
 interface Money {
   money: {};
   loading: boolean;
   error: string | null;
 }
+
 interface State {
   state?: Money;
 }
+
 function App() {
   const moneyState: State = useSelector((state) => state);
-  console.log(moneyState.state.loading, "app");
 
   return (
     <BrowserRouter>

@@ -6,20 +6,21 @@ import { useLocation, Link } from "react-router-dom";
 import { getCurrency } from "../../redux/actionCreators/getCurrency";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../redux/hooks/hooks";
-const BasicTabs: React.FC = () => {
-  interface Money {
-    money: {};
-    loading: boolean;
-    error: string | null;
-  }
-  interface State {
-    state?: Money;
-  }
 
+interface Money {
+  money: {};
+  loading: boolean;
+  error: string | null;
+}
+
+interface State {
+  state?: Money;
+}
+
+const BasicTabs: React.FC = () => {
   const dispatch = useAppDispatch();
   let location = useLocation();
   const moneyState: State = useSelector((state) => state);
-  console.log(moneyState, "fdsfds");
 
   React.useEffect(() => {
     dispatch(getCurrency());
@@ -56,4 +57,5 @@ const BasicTabs: React.FC = () => {
     </>
   );
 };
+
 export default BasicTabs;
